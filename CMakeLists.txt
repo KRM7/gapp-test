@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.21)
 
-project(name VERSION 0.1 LANGUAGES CXX)
+project(gapp-test VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
 
@@ -23,7 +23,10 @@ endif()
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
 
+find_package(gapp CONFIG REQUIRED)
+
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE gapp::gapp)
 
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC "cxx_std_20")
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC "$<$<CXX_COMPILER_ID:MSVC>:-Zc:preprocessor>" "$<$<CXX_COMPILER_ID:MSVC>:-Zc:__cplusplus>")

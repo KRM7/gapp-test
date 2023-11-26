@@ -1,6 +1,6 @@
-#include "header.hpp"
+#include <gapp/gapp.hpp>
 
 int main()
 {
-    f();
+    gapp::rng::prng.seed(0);
 }

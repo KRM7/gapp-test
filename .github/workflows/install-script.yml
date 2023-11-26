@@ -1,0 +1,47 @@
+﻿name: install-script
+
+on:
+  push:
+    branches:
+        - '*'
+  schedule:
+  - cron: '0 0 * * *'
+
+jobs:
+  install-script:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [ Release, Debug ]
+        compiler: [ { cxx: g++-12, pkgs: g++-12 } ]
+
+    name: install-script, ${{ matrix.build-type }}
+
+    steps:
+    - name: setup-compiler
+      run: sudo apt update && sudo apt install --allow-downgrades -y ${{ matrix.compiler.pkgs }}
+
+    - name: checkout-test-project
+      uses: actions/checkout@v3
+
+    - name: checkout-gapp
+      uses: actions/checkout@v3
+      with:
+        repository: KRM7/gapp
+        ref: master
+        path: gapp
+
+    - name: install-gapp
+      env:
+        CXX: ${{ matrix.compiler.cxx }}
+      run: sudo bash gapp/build/install.sh
+
+    - name: build-test-project
+      env:
+        CXX: ${{ matrix.compiler.cxx }}
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+        cmake --build .
+        ./gapp-test
