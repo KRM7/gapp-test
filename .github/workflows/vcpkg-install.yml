@@ -1,0 +1,39 @@
+﻿name: vcpkg-install
+
+on:
+  push:
+    branches:
+        - '*'
+  schedule:
+  - cron: '0 0 * * *'
+
+jobs:
+  vcpkg-install:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [ Release, Debug ]
+
+    name: vcpkg-install, ${{ matrix.build-type }}
+
+    steps:
+    - name: setup-compiler
+      run: sudo apt update && sudo apt install --allow-downgrades -y ${{ matrix.compiler.pkgs }}
+
+    - name: install-gapp
+      run: |
+        cd ${VCPKG_INSTALLATION_ROOT}
+        git fetch origin && git reset --hard origin/master
+        sudo bash bootstrap-vcpkg.sh
+        vcpkg install gapp
+
+    - name: checkout-test-project
+      uses: actions/checkout@v3
+
+    - name: build-test-project
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DCMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
+        cmake --build .
+        ./gapp-test
