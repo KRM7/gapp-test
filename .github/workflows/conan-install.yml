@@ -1,0 +1,42 @@
+﻿name: conan-install
+
+on:
+  push:
+    branches:
+        - '*'
+  schedule:
+  - cron: '0 0 * * *'
+
+jobs:
+  conan-install:
+    runs-on: ubuntu-22.04
+
+    name: conan-install
+
+    steps:
+    - name: setup-conan
+      run: |
+        pip install conan
+        conan profile detect --force
+        sed -i -e "s|compiler\.cppstd=.*|compiler.cppstd=20|g" $(conan profile path default)
+
+    - name: checkout-gapp
+      uses: actions/checkout@v3
+      with:
+        repository: KRM7/gapp
+        ref: dev
+        path: gapp
+
+    - name: install-gapp
+      run: conan create gapp
+
+    - name: checkout-test-project
+      uses: actions/checkout@v3
+
+    - name: build-test-project
+      run: |
+        conan install . --output-folder=build
+        cd build
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+        cmake --build .
+        ./gapp-test

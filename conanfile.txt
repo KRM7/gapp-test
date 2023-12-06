@@ -1,0 +1,6 @@
+[requires]
+gapp/0.2.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
