@@ -18,9 +18,6 @@ jobs:
     name: vcpkg-install, ${{ matrix.build-type }}
 
     steps:
-    - name: setup-compiler
-      run: sudo apt update && sudo apt install --allow-downgrades -y ${{ matrix.compiler.pkgs }}
-
     - name: install-gapp
       run: |
         cd ${VCPKG_INSTALLATION_ROOT}
