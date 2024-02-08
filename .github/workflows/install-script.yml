@@ -35,7 +35,7 @@ jobs:
     - name: install-gapp
       env:
         CXX: ${{ matrix.compiler.cxx }}
-      run: sudo bash gapp/build/install.sh
+      run: sudo bash gapp/tools/install.sh
 
     - name: build-test-project
       env:
