@@ -1,5 +1,5 @@
 [requires]
-gapp/0.3.0
+gapp/1.0.0
 
 [generators]
 CMakeDeps
